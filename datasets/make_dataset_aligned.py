@@ -3,6 +3,18 @@ import os
 from PIL import Image
 
 
+def common_member(a, b):
+    a_set = set(a)
+    b_set = set(b)
+
+    if a_set & b_set:
+        print(a_set & b_set)
+    else:
+        print("No common elements")
+
+    return list(a_set & b_set)
+
+
 def get_file_paths(folder):
     image_file_paths = []
     for root, dirs, filenames in os.walk(folder):
@@ -15,6 +27,22 @@ def get_file_paths(folder):
 
         break  # prevent descending into subfolders
     return image_file_paths
+
+
+def get_file_paths2(folder1, folder2):
+    image_file_paths1 = []
+    image_file_paths2 = []
+
+    _, _, filenames1 = next(os.walk(folder1))
+    _, _, filenames2 = next(os.walk(folder2))
+    filenames = common_member(filenames1, filenames2)
+
+    image_file_paths1 = [os.path.join(os.path.abspath(folder1), name) for name in filenames
+                         if name.endswith('.png') or name.endswith('.jpg')]
+    image_file_paths2 = [os.path.join(os.path.abspath(folder2), name) for name in filenames
+                         if name.endswith('.png') or name.endswith('.jpg')]
+
+    return image_file_paths1, image_file_paths2
 
 
 def align_images(a_file_paths, b_file_paths, target_path):
@@ -47,17 +75,19 @@ if __name__ == '__main__':
 
     test_a_path = os.path.join(dataset_folder, 'testA')
     test_b_path = os.path.join(dataset_folder, 'testB')
-    test_a_file_paths = get_file_paths(test_a_path)
-    test_b_file_paths = get_file_paths(test_b_path)
+    test_a_file_paths, test_b_file_paths = get_file_paths2(test_a_path, test_b_path)
     assert(len(test_a_file_paths) == len(test_b_file_paths))
     test_path = os.path.join(dataset_folder, 'test')
 
     train_a_path = os.path.join(dataset_folder, 'trainA')
     train_b_path = os.path.join(dataset_folder, 'trainB')
-    train_a_file_paths = get_file_paths(train_a_path)
-    train_b_file_paths = get_file_paths(train_b_path)
+    # train_a_file_paths = get_file_paths(train_a_path)
+    # train_b_file_paths = get_file_paths(train_b_path)
+    train_a_file_paths, train_b_file_paths = get_file_paths2(train_a_path, train_b_path)
     assert(len(train_a_file_paths) == len(train_b_file_paths))
     train_path = os.path.join(dataset_folder, 'train')
 
     align_images(test_a_file_paths, test_b_file_paths, test_path)
     align_images(train_a_file_paths, train_b_file_paths, train_path)
+
+    print("Finished!")
