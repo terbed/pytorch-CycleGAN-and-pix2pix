@@ -60,6 +60,9 @@ class CycleGANModel(BaseModel):
             visual_names_A.append('idt_B')
             visual_names_B.append('idt_A')
 
+            assert self.opt.input_nc == self.opt.output_nc, \
+                "\nIf identity loss is used, input_nc and output_nc must be equal!"
+
         self.visual_names = visual_names_A + visual_names_B  # combine visualizations for A and B
         # specify the models you want to save to the disk. The training/test scripts will call <BaseModel.save_networks> and <BaseModel.load_networks>.
         if self.isTrain:
