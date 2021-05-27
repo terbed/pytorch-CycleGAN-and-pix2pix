@@ -33,10 +33,20 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
     ims, txts, links = [], [], []
 
     for label, im_data in visuals.items():
-        im = util.tensor2im(im_data)
-        image_name = '%s_%s.png' % (name, label)
-        save_path = os.path.join(image_dir, image_name)
-        util.save_image(im, save_path, aspect_ratio=aspect_ratio)
+        image_numpy = util.tensor2im4save(im_data)
+        if image_numpy.shape[2] == 2:
+            amp = np.expand_dims(image_numpy[:, :, 0], 2)
+            ang = np.expand_dims(image_numpy[:, :, 1], 2)
+            image_name = '%s_%s_amp.png' % (name, label)
+            image_name_ang = '%s_%s_ang.png' % (name, label)
+            amp_path = os.path.join(image_dir, image_name)
+            ang_path = os.path.join(image_dir, image_name_ang)
+            util.save_image(amp, amp_path)
+            util.save_image(ang, ang_path)
+        else:
+            image_name = '%s_%s.png' % (name, label)
+            save_path = os.path.join(image_dir, image_name)
+            util.save_image(image_numpy, save_path, aspect_ratio=aspect_ratio)
         ims.append(image_name)
         txts.append(label)
         links.append(image_name)
@@ -157,9 +167,17 @@ class Visualizer():
             self.saved = True
             # save images to the disk
             for label, image in visuals.items():
-                image_numpy = util.tensor2im(image)
-                img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.png' % (epoch, label))
-                util.save_image(image_numpy, img_path)
+                image_numpy = util.tensor2im4save(image)
+                if image_numpy.shape[2] == 2:
+                    amp = np.expand_dims(image_numpy[:, :, 0], 2)
+                    ang = np.expand_dims(image_numpy[:, :, 1], 2)
+                    amp_path = os.path.join(self.img_dir, 'epoch%.3d_%s_amp.png' % (epoch, label))
+                    ang_path = os.path.join(self.img_dir, 'epoch%.3d_%s_ang.png' % (epoch, label))
+                    util.save_image(amp, amp_path)
+                    util.save_image(ang, ang_path)
+                else:
+                    img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.png' % (epoch, label))
+                    util.save_image(image_numpy, img_path)
 
             # update website
             webpage = html.HTML(self.web_dir, 'Experiment name = %s' % self.name, refresh=1)
