@@ -133,7 +133,8 @@ def define_G(input_nc, output_nc, ngf, netG, norm='batch', use_dropout=False, in
     Returns a generator
 
     Our current implementation provides two types of generators:
-        U-Net: [unet_128] (for 128x128 input images) and [unet_256] (for 256x256 input images)
+        U-Net: [unet_128] (for 128x128 input images, 7 downconc) and [unet_256] (for 256x256 input images, 8 downconv),
+        [unet_64] -> 6 downconv, [unet_32] -> 5 downconv
         The original U-Net paper: https://arxiv.org/abs/1505.04597
 
         Resnet-based generator: [resnet_6blocks] (with 6 Resnet blocks) and [resnet_9blocks] (with 9 Resnet blocks)

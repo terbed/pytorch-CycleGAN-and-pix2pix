@@ -1,5 +1,6 @@
 import torch
 import itertools
+from pytorch_msssim import ms_ssim
 from util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
@@ -88,8 +89,16 @@ class CycleGANModel(BaseModel):
             self.fake_B_pool = ImagePool(opt.pool_size)  # create image buffer to store previously generated images
             # define loss functions
             self.criterionGAN = networks.GANLoss(opt.gan_mode).to(self.device)  # define GAN loss.
-            self.criterionCycle = torch.nn.L1Loss()
-            self.criterionIdt = torch.nn.L1Loss()
+            if opt.distance_metric == 'L1':
+                self.criterionCycle = torch.nn.L1Loss()
+                self.criterionIdt = torch.nn.L1Loss()
+            elif opt.distance_metric == 'MSSIM':
+                self.criterionCycle = ms_ssim   # warning default range: 255
+                self.criterionIdt = ms_ssim     # warning! default range: 255
+            else:
+                print(f"ERROR! Wrong distance metric name is given: {opt.distance_metric}! Choose from: [L1 | MSSIM]")
+                exit(666)
+
             # initialize optimizers; schedulers will be automatically created by function <BaseModel.setup>.
             self.optimizer_G = torch.optim.Adam(itertools.chain(self.netG_A.parameters(), self.netG_B.parameters()), lr=opt.lr, betas=(opt.beta1, 0.999))
             self.optimizer_D = torch.optim.Adam(itertools.chain(self.netD_A.parameters(), self.netD_B.parameters()), lr=opt.lr, betas=(opt.beta1, 0.999))
