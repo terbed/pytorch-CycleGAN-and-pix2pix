@@ -6,6 +6,22 @@ from .base_model import BaseModel
 from . import networks
 
 
+class MSSIMLoss(torch.nn.Module):
+    def __init__(self):
+        super(MSSIMLoss, self).__init__()
+
+    @staticmethod
+    def rescale(img: torch.tensor):
+        return img*0.5+0.5
+
+    def forward(self, output: torch.tensor, target: torch.tensor):
+        # rescale tensors to be in range [0, 1]
+        output = self.rescale(output)
+        target = self.rescale(target)
+
+        return 1. - ms_ssim(output, target, data_range=1.0)
+
+
 class CycleGANModel(BaseModel):
     """
     This class implements the CycleGAN model, for learning image-to-image translation without paired data.
@@ -96,8 +112,8 @@ class CycleGANModel(BaseModel):
                 self.criterionCycle = torch.nn.L1Loss()
                 self.criterionIdt = torch.nn.L1Loss()
             elif opt.distance_metric == 'MSSIM':
-                self.criterionCycle = ms_ssim   # warning default range: 255
-                self.criterionIdt = ms_ssim     # warning! default range: 255
+                self.criterionCycle = MSSIMLoss()
+                self.criterionIdt = MSSIMLoss()
             else:
                 print(f"ERROR! Wrong distance metric name is given: {opt.distance_metric}! Choose from: [L1 | MSSIM]")
                 exit(666)
