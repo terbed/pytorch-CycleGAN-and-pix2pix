@@ -167,8 +167,8 @@ class Visualizer():
             self.saved = True
             # save images to the disk
             for label, image in visuals.items():
-                image_numpy = util.tensor2im4save(image)
                 if image_numpy.shape[2] == 2:
+                    image_numpy = util.tensor2im4save(image)
                     amp = np.expand_dims(image_numpy[:, :, 0], 2)
                     ang = np.expand_dims(image_numpy[:, :, 1], 2)
                     amp_path = os.path.join(self.img_dir, 'epoch%.3d_%s_amp.png' % (epoch, label))
@@ -176,7 +176,9 @@ class Visualizer():
                     util.save_image(amp, amp_path)
                     util.save_image(ang, ang_path)
                 else:
+                    image_numpy = util.tensor2im(image)
                     img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.png' % (epoch, label))
+                    print(f"Saving image: {image_numpy.shape, image_numpy.dtype}")
                     util.save_image(image_numpy, img_path)
 
             # update website
