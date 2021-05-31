@@ -30,8 +30,6 @@ def get_file_paths(folder):
 
 
 def get_file_paths2(folder1, folder2):
-    image_file_paths1 = []
-    image_file_paths2 = []
 
     _, _, filenames1 = next(os.walk(folder1))
     _, _, filenames2 = next(os.walk(folder2))

@@ -30,16 +30,14 @@ class HoloDataset(BaseDataset):
         _, _, self.A_names = next(os.walk(self.dir_A))
         self.A_names = [name.split(".")[0] for name in self.A_names]
         _, _, self.B_names = next(os.walk(self.dir_B))
-        self.A_names = [name.split(".")[0] for name in self.B_names]
+        self.B_names = [name.split(".")[0] for name in self.B_names]
 
-        self.idxs = [name.split("_")[-1] for name in self.A_names if name.split("_")[0] == "amp"]
+        self.idxs_A = [name.split("_")[-1] for name in self.A_names if name.split("_")[0] == "amp"]
+        self.idxs_B = [name.split("_")[-1] for name in self.B_names if name.split("_")[0] == "amp"]
 
-        self.A_size = len(self.A_names)//2  # get the size of dataset A
-        self.B_size = len(self.B_names)  # get the size of dataset B
-        assert self.A_size == self.B_size, "A and B input has to be same number of elements."
-        btoA = self.opt.direction == 'BtoA'
-        input_nc = self.opt.output_nc if btoA else self.opt.input_nc       # get the number of channels of input image
-        output_nc = self.opt.input_nc if btoA else self.opt.output_nc      # get the number of channels of output image
+        self.idxs = self.common_member(self.idxs_A, self.idxs_B)
+        self.size = len(self.idxs)
+
         self.transform_A = get_transform(self.opt, nc=1)
         self.transform_B = get_transform(self.opt, nc=1)
 
@@ -90,4 +88,16 @@ class HoloDataset(BaseDataset):
         As we have two datasets with potentially different number of images,
         we take a maximum of
         """
-        return max(self.A_size, self.B_size)
+        return self.size
+
+    @staticmethod
+    def common_member(a, b):
+        a_set = set(a)
+        b_set = set(b)
+
+        if a_set & b_set:
+            print(a_set & b_set)
+        else:
+            print("No common elements")
+
+        return list(a_set & b_set)
