@@ -178,7 +178,6 @@ class Visualizer():
                 else:
                     image_numpy = util.tensor2im(image)
                     img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.png' % (epoch, label))
-                    print(f"Saving image: {image_numpy.shape, image_numpy.dtype}")
                     util.save_image(image_numpy, img_path)
 
             # update website
