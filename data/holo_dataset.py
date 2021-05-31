@@ -6,7 +6,7 @@ import torch
 import random
 
 
-class HologramDataset(BaseDataset):
+class HoloDataset(BaseDataset):
     """
     This dataset class can load unaligned/unpaired datasets.
 
