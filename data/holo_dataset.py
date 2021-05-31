@@ -52,7 +52,14 @@ class HoloDataset(BaseDataset):
                 ang = Image.open(ang_path)
                 lab = Image.open(lab)
 
-                self.database.append({"Amp": amp, "Ang": ang, "BF": lab, "id": idx})
+                # apply image transformation
+                amp = self.transform_A(amp)
+                ang = self.transform_A(ang)
+                lab = self.transform_B(lab)
+
+                inp = torch.cat((amp, ang), dim=0)
+
+                self.database.append({'A': inp, 'B': lab, 'A_paths': idx, 'B_paths': idx})
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -67,20 +74,7 @@ class HoloDataset(BaseDataset):
             B_paths (str)    -- image paths
         """
 
-        sample = self.database[index]
-
-        amp = sample["Amp"]
-        ang = sample["Anp"]
-        lab = sample["BF"]
-
-        # apply image transformation
-        amp = self.transform_A(amp)
-        ang = self.transform_A(ang)
-        lab = self.transform_B(lab)
-
-        inp = torch.cat((amp, ang), dim=0)
-
-        return {'A': inp, 'B': lab, 'A_paths': sample["id"], 'B_paths': sample["id"]}
+        return self.database[index]
 
     def __len__(self):
         """Return the total number of images in the dataset.
@@ -95,9 +89,7 @@ class HoloDataset(BaseDataset):
         a_set = set(a)
         b_set = set(b)
 
-        if a_set & b_set:
-            print(a_set & b_set)
-        else:
+        if not (a_set & b_set):
             print("No common elements")
 
         return list(a_set & b_set)
