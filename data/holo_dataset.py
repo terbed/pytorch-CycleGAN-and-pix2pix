@@ -1,5 +1,5 @@
 import os
-from data.base_dataset import BaseDataset, get_transform
+from data.base_dataset import BaseDataset, get_transform, get_params
 from data.image_folder import make_dataset
 from PIL import Image
 import torch
@@ -38,7 +38,6 @@ class HoloDataset(BaseDataset):
         self.idxs = self.common_member(self.idxs_A, self.idxs_B)
         self.size = len(self.idxs)
 
-        self.transform_A = get_transform(self.opt, nc=1)
         self.transform_B = get_transform(self.opt, nc=1)
 
         self.database = []
@@ -52,9 +51,12 @@ class HoloDataset(BaseDataset):
                 ang = Image.open(ang_path)
                 lab = Image.open(lab)
 
-                # apply image transformation
-                amp = self.transform_A(amp)
-                ang = self.transform_A(ang)
+                # apply image transformation (the same transform for amp+ang)
+                curr_params = get_params(opt, opt.load_size)
+                transform_A = get_transform(self.opt, params=curr_params, nc=1)
+                amp = transform_A(amp)
+                ang = transform_A(ang)
+
                 lab = self.transform_B(lab)
 
                 inp = torch.cat((amp, ang), dim=0)
