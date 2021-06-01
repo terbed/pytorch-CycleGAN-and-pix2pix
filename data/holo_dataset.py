@@ -52,7 +52,7 @@ class HoloDataset(BaseDataset):
                 lab = Image.open(lab)
 
                 # apply image transformation (the same transform for amp+ang)
-                curr_params = get_params(opt, opt.load_size)
+                curr_params = get_params(opt, (opt.load_size, opt.load_size))
                 transform_A = get_transform(self.opt, params=curr_params, nc=1)
                 amp = transform_A(amp)
                 ang = transform_A(ang)
