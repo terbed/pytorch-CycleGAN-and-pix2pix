@@ -45,7 +45,7 @@ def tensor2im4save(input_image, imtype=np.uint8):
         image_numpy = image_tensor[0].cpu().float().numpy()  # convert it into a numpy array
 
         image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0  # post-processing: transpose and scaling
-        print(image_numpy.shape)
+
         if image_numpy.shape[2] == 1:
             image_numpy = np.squeeze(image_numpy, axis=2)
     else:  # if it is a numpy array, do nothing
