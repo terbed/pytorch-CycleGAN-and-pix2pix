@@ -33,8 +33,8 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
     ims, txts, links = [], [], []
 
     for label, im_data in visuals.items():
-        image_numpy = util.tensor2im4save(im_data)
         if image_numpy.shape[2] == 2:
+            image_numpy = util.tensor2im4save(im_data)
             amp = np.expand_dims(image_numpy[:, :, 0], 2)
             ang = np.expand_dims(image_numpy[:, :, 1], 2)
             image_name = '%s_%s_amp.png' % (name, label)
@@ -44,6 +44,7 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
             util.save_image(amp, amp_path)
             util.save_image(ang, ang_path)
         else:
+            image_numpy = util.tensor2im(im_data)
             image_name = '%s_%s.png' % (name, label)
             save_path = os.path.join(image_dir, image_name)
             util.save_image(image_numpy, save_path, aspect_ratio=aspect_ratio)
