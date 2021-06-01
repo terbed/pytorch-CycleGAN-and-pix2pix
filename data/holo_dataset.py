@@ -38,7 +38,7 @@ class HoloDataset(BaseDataset):
         self.idxs = self.common_member(self.idxs_A, self.idxs_B)
         self.size = len(self.idxs)
 
-        self.transform_B = get_transform(self.opt, nc=1)
+        # self.transform_B = get_transform(self.opt, nc=1)
 
         self.database = []
         if load_to_memory:
@@ -53,11 +53,11 @@ class HoloDataset(BaseDataset):
 
                 # apply image transformation (the same transform for amp+ang)
                 curr_params = get_params(opt, (opt.load_size, opt.load_size))
-                transform_A = get_transform(self.opt, params=curr_params, nc=1)
-                amp = transform_A(amp)
-                ang = transform_A(ang)
+                transform = get_transform(self.opt, params=curr_params, nc=1)
+                amp = transform(amp)
+                ang = transform(ang)
 
-                lab = self.transform_B(lab)
+                lab = transform(lab)
 
                 inp = torch.cat((amp, ang), dim=0)
 
