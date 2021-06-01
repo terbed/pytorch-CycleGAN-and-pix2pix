@@ -37,8 +37,8 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
 
         if len(image_numpy.shape) > 2:
             if image_numpy.shape[2] == 2:
-                amp = np.expand_dims(image_numpy[:, :, 0], 2)
-                ang = np.expand_dims(image_numpy[:, :, 1], 2)
+                amp = image_numpy[:, :, 0]
+                ang = image_numpy[:, :, 1]
                 image_name = '%s_%s_amp.png' % (name, label)
                 image_name_ang = '%s_%s_ang.png' % (name, label)
                 amp_path = os.path.join(image_dir, image_name)
