@@ -19,6 +19,7 @@ def tensor2im(input_image, imtype=np.uint8):
         else:
             return input_image
         image_numpy = image_tensor[0].cpu().float().numpy()  # convert it into a numpy array
+        image_numpy = np.abs(image_numpy)   # if it was complex convert it to real
         if image_numpy.shape[0] == 1:  # grayscale to RGB
             image_numpy = np.tile(image_numpy, (3, 1, 1))
         elif image_numpy.shape[0] == 2:  # amp + ang recostructed hologram image
@@ -43,6 +44,7 @@ def tensor2im4save(input_image, imtype=np.uint8):
         else:
             return input_image
         image_numpy = image_tensor[0].cpu().float().numpy()  # convert it into a numpy array
+        image_numpy = np.abs(image_numpy)
 
         image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0  # post-processing: transpose and scaling
 
