@@ -8,7 +8,7 @@ import torchvision.transforms.functional as tvf
 import numpy as np
 
 
-class Holo2Dataset(BaseDataset):
+class HoloCDataset(BaseDataset):
     """
     This dataset class can load unaligned/unpaired datasets.
 
