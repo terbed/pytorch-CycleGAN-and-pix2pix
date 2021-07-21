@@ -66,6 +66,9 @@ class HoloCDataset(BaseDataset):
 
                 lab = transform(lab).type(torch.complex64)
 
+                print(z.shape)
+                print(lab.shape)
+
                 self.database.append({'A': z, 'B': lab, 'A_paths': idx, 'B_paths': idx})
 
     def __getitem__(self, index):
