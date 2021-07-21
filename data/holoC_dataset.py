@@ -56,8 +56,10 @@ class HoloCDataset(BaseDataset):
                 # apply image transformation (the same transform for amp+ang)
                 curr_params = get_params(opt, (opt.load_size, opt.load_size))
                 transform = get_transform(self.opt, params=curr_params, nc=1)
+                transform2 = get_transform(self.opt, params=curr_params, nc=1, convert=False)
                 amp = transform(amp)
 
+                ang = transform2(ang)
                 ang = tvf.to_tensor(ang)
                 ang = ang*2*np.pi - np.pi
                 z = amp*torch.exp(1j*ang)
